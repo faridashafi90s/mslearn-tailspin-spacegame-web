@@ -52,6 +52,11 @@ steps:
     custom: tool
     arguments: 'restore'
 
+- script: |
+    dotnet tool install --tool-path .reportgenerator dotnet-reportgenerator-globaltool
+    echo "##vso[task.prependpath]$(pwd)/.reportgenerator"
+  displayName: 'Install ReportGenerator Tool'
+
 - task: DotNetCoreCLI@2
   displayName: 'Run unit tests - $(buildConfiguration)'
   inputs:
