@@ -1,3 +1,21 @@
-pool: MyAgentPool
+trigger:
+- main  # This will trigger the pipeline whenever code is pushed to the main branch
+
+pool:
+  vmImage: 'ubuntu-latest'  # You can also use windows-latest if required
+
 steps:
-- bash: echo hello world
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK'
+  inputs:
+    packageType: 'sdk'
+    version: '6.x'  # Adjust version based on your project needs
+
+- script: |
+    dotnet restore
+    dotnet build --configuration Release
+  displayName: 'Restore and Build'
+
+- script: |
+    dotnet test --configuration Release
+  displayName: 'Run Unit Tests'
