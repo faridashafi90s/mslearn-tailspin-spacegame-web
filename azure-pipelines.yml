@@ -1,15 +1,15 @@
 trigger:
-- main  # This will trigger the pipeline whenever code is pushed to the main branch
+- main  # Runs the pipeline when code is pushed to the main branch
 
 pool:
-  vmImage: 'ubuntu-latest'  # You can also use windows-latest if required
+  vmImage: 'ubuntu-latest'  # Uses the latest Ubuntu VM
 
 steps:
 - task: UseDotNet@2
   displayName: 'Install .NET SDK'
   inputs:
     packageType: 'sdk'
-    version: '6.x'  # Adjust version based on your project needs
+    version: '6.x'  # Change based on your project needs
 
 - script: |
     dotnet restore
@@ -19,3 +19,15 @@ steps:
 - script: |
     dotnet test --configuration Release
   displayName: 'Run Unit Tests'
+
+# **NEW: Publish the build output**
+- script: |
+    dotnet publish -c Release -o $(Build.ArtifactStagingDirectory)
+  displayName: 'Publish Application'
+
+# **NEW: Store the artifact for deployment**
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: 'drop'
